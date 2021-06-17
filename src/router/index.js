@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../components/Login'
 import NormalUser from '../components/NormalUser'
+import Contributor from '../components/Contributor'
 
 Vue.use(VueRouter)
 
@@ -14,6 +15,11 @@ const routes = [{
         path: '/normal-user',
         name: 'NormalUser',
         component: NormalUser
+    },
+    {
+        path: '/contributor',
+        name: 'Contributor',
+        component: Contributor
     }
 ]
 

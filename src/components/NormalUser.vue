@@ -1,5 +1,5 @@
 <template>
-  <div class="normal-user">
+  <div class="main">
     <div class="left-box">
       <div class="cat-box">Category</div>
       <div class="cat-selection">
@@ -11,37 +11,84 @@
       </div>
     </div>
     <div class="right-box">
-        <div class="image-box" v-for="(image, idx) in 3" :key="idx" @click="imageView = true">
-          <div class="img"></div>
-          <div class="content">
-            Contributor: Mukesh<br />
-            Image Name: asdasd<br />
-            Total Downloads: 4
-          </div>
+      <div
+        class="details"
+        v-for="(image, idx) in paginatedImages"
+        :key="idx"
+        @click="imageView = true;selectedImage = image"
+      >
+        <div class="img-box">
+          <img :src="require(`./img.png`)" />
+        </div>
+        <div class="info">
+          Contributor: Mukesh<br />
+          Image Name: asdasd<br />
+          Total Downloads: 4
+        </div>
+      </div>
+
+      <div class="pagination" v-if="paginations > 1">
+        Paginations
+        <template v-for="(i, idx) in paginations">
+          <input
+            :key="i"
+            type="submit"
+            :value="i"
+            class="p-btn"
+            @click="page = idx"
+          />
+        </template>
       </div>
     </div>
 
-    <image-view v-if="imageView" @close="imageView = $event"></image-view>
+    <image-view v-if="imageView" @close="imageView = $event" :image="selectedImage"></image-view>
   </div>
 </template>
 <script>
-import ImageView from "./ImageView.vue"
+import ImageView from "./ImageView.vue";
 export default {
-    components: {ImageView},
+  components: { ImageView },
   data() {
     return {
-      imageView: false,  
+      imageView: false,
       categories: [
         { name: "Technology", code: 1 },
         { name: "Marketing", code: 2 },
         { name: "B2B", code: 3 },
       ],
+      images: [
+        { imahe: 1 },
+        { imahe: 1 },
+        { imahe: 1 },
+        { imahe: 1 },
+        { imahe: 1 },
+        { imahe: 1 },
+        { imahe: 1 },
+        { imahe: 1 },
+        { imahe: 1 },
+        { imahe: 1 },
+      ],
+      selectedImage: {},
+      itemsPerPage: 3,
+      page: 0,
     };
+  },
+  computed: {
+    paginations() {
+      const pages = this.images.length / this.itemsPerPage;
+      return Math.ceil(pages);
+    },
+    paginatedImages() {
+      return this.images.slice(
+        this.page * this.itemsPerPage,
+        this.itemsPerPage * (this.page == 0 ? 1 : this.page + 1)
+      );
+    },
   },
 };
 </script>
 <style>
-.normal-user {
+.main {
   position: relative;
   height: calc(100vh - 140px);
   display: flex;
@@ -51,56 +98,76 @@ export default {
 }
 
 /* Left Part */
-.normal-user .left-box {
+.main .left-box {
   margin: 20px 0;
   width: 20%;
   /* background: rgb(43, 43, 32); */
   border: 1px solid grey;
 }
-.normal-user .left-box .cat-box {
+.main .left-box .cat-box {
   max-height: 40px;
   border-bottom: 1px solid grey;
   font-size: 18px;
   padding: 12px;
+  cursor: pointer;
 }
 
-.normal-user .left-box .cat-selection {
+.main .left-box .cat-selection {
   padding: 12px;
 }
 
-.normal-user .left-box .cat-selection .cat-field {
+.main .left-box .cat-selection .cat-field {
   margin-top: 20px;
 }
 
-.normal-user .left-box .cat-selection .cat-field label {
+.main .left-box .cat-selection .cat-field label {
   font-size: 18px;
   padding-left: 8px;
   letter-spacing: 1px;
 }
 
 /* Right Part */
-.normal-user .right-box {
+.main .right-box {
   margin: 20px 0;
-  width: 75%;
+  width: 70%;
   border: 1px solid grey;
   display: flex;
   flex-flow: row wrap;
+  position: relative;
 }
 
-.normal-user .right-box .image-box {
+.main .right-box .details{
   height: 350px;
   width: 300px;
   margin: 20px 20px;
 }
 
-.normal-user .right-box .img {
+.main .right-box .img-box {
   height: 250px;
-  background: gold;  
+  background: gold;
 }
 
-.normal-user .right-box .content {
+.main .right-box .img-box img {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+}
+
+.main .right-box .info {
   padding-top: 14px;
   line-height: 24px;
   letter-spacing: 1px;
+}
+
+.main .pagination {
+  position: absolute;
+  bottom: 2%;
+  right: 3%;
+  height: 40px;
+  width: 100%;
+  text-align: right;
+}
+.main .pagination .p-btn {
+  margin: 4px;
 }
 </style>

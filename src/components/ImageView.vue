@@ -8,18 +8,20 @@
       </div>
       <div class="image-content">
         <div class="details">
-          <div class="img"></div>
+          <div class="img-box">
+            <img :src="require(`./img.png`)" />
+          </div>
           <div class="info">
-            Contributor: Mukesh<br />
-            Image Name: asdasd<br />
-            Total Downloads: 4
+            Contributor: {{ image.contributor }}<br />
+            Image Name: {{ image.name }}<br />
+            Total Downloads: {{ image.total_downloads }}
           </div>
           <div class="justify-content:center">
             <input
               type="submit"
               value="Download"
               class="download-btn"
-              @click="doSignUp(signUp)"
+              @click="downloadImage()"
             />
           </div>
         </div>
@@ -29,9 +31,30 @@
 </template>
 <script>
 export default {
-    props: {
-        image: Object
-    }
+  props: {
+    image: Object,
+  },
+  methods: {
+    async downloadImage() {
+      let url =
+        "https://www.pixsy.com/wp-content/uploads/2021/04/ben-sweet-2LowviVHZ-E-unsplash-1.jpeg";
+      const image = await fetch(url);
+      const imageBlog = await image.blob();
+      const imageURL = URL.createObjectURL(imageBlog);
+
+      const link = document.createElement("a");
+      link.href = imageURL;
+      link.download = this.image.name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      this.updateDownloadsCount();
+    },
+    updateDownloadsCount() {
+      this.$http.get(`categories`).then(function () {});
+    },
+  },
 };
 </script>
 <style>
@@ -90,10 +113,16 @@ export default {
   width: 50%;
 }
 
-.modal .image-content .details .img {
+.modal .image-content .details .img-box {
   height: 200px;
   background: chartreuse;
   margin-top: 20px;
+}
+
+.modal .image-content .img-box img {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
 }
 
 .modal .image-content .details .info {
@@ -112,5 +141,6 @@ export default {
   letter-spacing: 2px;
   border: 0.5px solid grey;
   margin-left: 30%;
+  cursor: pointer;
 }
 </style>
