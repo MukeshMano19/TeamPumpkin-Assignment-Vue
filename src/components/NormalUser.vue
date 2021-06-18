@@ -45,9 +45,8 @@
   </div>
 </template>
 <script>
-import ImageView from "./ImageView.vue";
 export default {
-  components: { ImageView },
+  components: { ImageView: () => import('./ImageView.vue') },
   data() {
     return {
       imageView: false,

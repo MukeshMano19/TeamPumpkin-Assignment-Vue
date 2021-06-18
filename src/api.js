@@ -1,8 +1,8 @@
 let baseUrl = ''
 if (process.env.NODE_ENV === 'production') {
-    baseUrl = 'http://213.208.188.96:5000/api/v1'
+    baseUrl = 'http://localhost:4000/api'
 } else {
-    baseUrl = 'http://localhost:5000/api/v1'
+    baseUrl = 'http://localhost:4000/api'
 }
 
 export const apiHost = baseUrl

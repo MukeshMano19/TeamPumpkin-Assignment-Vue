@@ -49,7 +49,7 @@
       <h2 class="">Login</h2>
       <br />
       <label class="lbl-text">User Name or Email:</label><br />
-      <input type="text" class="text-field" v-model="login.user" /><br /><br />
+      <input type="text" class="text-field" v-model="login.email" /><br /><br />
       <label class="lbl-text">Password:</label><br />
       <input
         type="password"
@@ -68,6 +68,8 @@
 </template>
 
 <script>
+import {mapMutations } from "vuex"
+
 export default {
   name: "Login",
   data() {
@@ -77,12 +79,37 @@ export default {
     };
   },
   methods: {
+    ...mapMutations(["setUser"]),
     doSignUp(data) {
-      console.log(data);
+      this.$http
+        .post(`user/signUp`, data)
+        .then((res) => {
+          alert(res.body.message);
+          this.signUp = {};
+        })
+        .catch((e) => {
+          alert(e.body.message);
+        });
     },
-    doLogin(data){
-      console.log(data)
-    }
+    doLogin(data) {
+      this.$http
+        .post(`user/login`, data)
+        .then((res) => {
+          localStorage.setItem("appToken", res.body.token);
+          localStorage.setItem("appUser", JSON.stringify(res.body.user));
+
+          this.setUser(res.body)
+
+          if (res.body.user && res.body.user.type == "NU") {
+            this.$router.push("/normal-user");
+            return;
+          }
+          this.$router.push("/contributor");
+        })
+        .catch((e) => {
+          alert(e.body.message);
+        });
+    },
   },
 };
 </script>
@@ -130,5 +157,6 @@ export default {
   font-weight: 600;
   letter-spacing: 2px;
   border: 0.5px solid grey;
+  cursor: pointer;
 }
 </style>
