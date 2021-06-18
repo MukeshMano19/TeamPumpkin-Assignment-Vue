@@ -3,7 +3,7 @@
     <div class="left-box">
       <div class="cat-box">Category</div>
       <div class="cat-selection">
-        <div class="cat-field" v-for="cat in categories" :key="cat.code">
+        <div class="cat-field" v-for="(cat, idx) in categories" :key="idx">
           <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike" />
           <label for="vehicle1">{{ cat.name }}</label
           ><br />
@@ -15,15 +15,19 @@
         class="details"
         v-for="(image, idx) in paginatedImages"
         :key="idx"
-        @click="imageView = true;selectedImage = image"
+        @click="
+          imageView = true;
+          selectedImage = image;
+        "
       >
         <div class="img-box">
-          <img :src="require(`./img.png`)" />
+          <!-- <img :src="require(`./img.png`)" /> -->
+          <img :src="`${baseUrl}/image/${image.id}`" />
         </div>
         <div class="info">
-          Contributor: Mukesh<br />
-          Image Name: asdasd<br />
-          Total Downloads: 4
+          Contributor: {{ image.contributor }}<br />
+          Image Name: {{ image.name }}<br />
+          Total Downloads: {{ image.total_downloads }}
         </div>
       </div>
 
@@ -41,38 +45,36 @@
       </div>
     </div>
 
-    <image-view v-if="imageView" @close="imageView = $event" :image="selectedImage"></image-view>
+    <image-view
+      v-if="imageView"
+      @close="imageView = $event"
+      :image="selectedImage"
+    ></image-view>
   </div>
 </template>
 <script>
+import { mapState } from "vuex";
+import { apiHost } from "../api";
+
 export default {
-  components: { ImageView: () => import('./ImageView.vue') },
+  components: { ImageView: () => import("./ImageView.vue") },
   data() {
     return {
+      baseUrl: apiHost,
       imageView: false,
       categories: [
-        { name: "Technology", code: 1 },
-        { name: "Marketing", code: 2 },
-        { name: "B2B", code: 3 },
+        { name: "Technology" },
+        { name: "Marketing" },
+        { name: "B2B" },
       ],
-      images: [
-        { imahe: 1 },
-        { imahe: 1 },
-        { imahe: 1 },
-        { imahe: 1 },
-        { imahe: 1 },
-        { imahe: 1 },
-        { imahe: 1 },
-        { imahe: 1 },
-        { imahe: 1 },
-        { imahe: 1 },
-      ],
+      images: [],
       selectedImage: {},
       itemsPerPage: 3,
       page: 0,
     };
   },
   computed: {
+    ...mapState(["user"]),
     paginations() {
       const pages = this.images.length / this.itemsPerPage;
       return Math.ceil(pages);
@@ -83,6 +85,20 @@ export default {
         this.itemsPerPage * (this.page == 0 ? 1 : this.page + 1)
       );
     },
+  },
+  methods: {
+    listImages() {
+      this.$http
+        .get(`user/${this.user.id}/images?NU=true`)
+        .then((res) => {
+          console.log(res);
+          this.images = res.body.data;
+        })
+        .catch(() => {});
+    },
+  },
+  created() {
+    this.listImages();
   },
 };
 </script>
@@ -135,7 +151,7 @@ export default {
   position: relative;
 }
 
-.main .right-box .details{
+.main .right-box .details {
   height: 350px;
   width: 300px;
   margin: 20px 20px;
@@ -143,7 +159,6 @@ export default {
 
 .main .right-box .img-box {
   height: 250px;
-  background: gold;
 }
 
 .main .right-box .img-box img {

@@ -10,6 +10,13 @@ Vue.use(VueResource);
 Vue.config.productionTip = false
 Vue.http.options.root = apiHost;
 
+Vue.http.interceptors.push(request => {
+    var token = localStorage.getItem("appToken");
+    if (token) {
+        request.headers.set("Authorization", "Bearer " + token);
+    }
+});
+
 new Vue({
     router,
     store,

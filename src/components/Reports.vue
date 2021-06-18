@@ -10,9 +10,9 @@
           <th>Total Downloads</th>
         </tr>
         <tr v-for="(image, idx) in paginatedImages" :key="idx">
-          <td>Jill</td>
-          <td>Smith</td>
-          <td>50</td>
+          <td>{{ image.name }}</td>
+          <td>{{ categories[image.category - 1] }}</td>
+          <td>{{ image.total_downloads }}</td>
         </tr>
       </table>
     </div>
@@ -31,26 +31,19 @@
   </div>
 </template>
 <script>
+import { mapState } from "vuex";
+
 export default {
   data() {
     return {
-      images: [
-        { imahe: 1 },
-        { imahe: 1 },
-        { imahe: 1 },
-        { imahe: 1 },
-        { imahe: 1 },
-        { imahe: 1 },
-        { imahe: 1 },
-        { imahe: 1 },
-        { imahe: 1 },
-        { imahe: 1 },
-      ],
+      images: [],
       itemsPerPage: 6,
       page: 0,
+      categories: ["Technology", "Marketing", "B2B"],
     };
   },
   computed: {
+    ...mapState(["user"]),
     paginations() {
       const pages = this.images.length / this.itemsPerPage;
       return Math.ceil(pages);
@@ -61,6 +54,19 @@ export default {
         this.itemsPerPage * (this.page == 0 ? 1 : this.page + 1)
       );
     },
+  },
+  methods: {
+    listImages() {
+      this.$http
+        .get(`user/${this.user.id}/images`)
+        .then((res) => {
+          this.images = res.body.data;
+        })
+        .catch(() => {});
+    },
+  },
+  created() {
+    this.listImages();
   },
 };
 </script>

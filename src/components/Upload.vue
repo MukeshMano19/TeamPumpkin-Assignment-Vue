@@ -46,27 +46,46 @@
   </div>
 </template>
 <script>
+import { mapState } from "vuex";
+
 export default {
   data() {
     return {
       image: {},
     };
   },
+  computed: {
+    ...mapState(["user"]),
+  },
   methods: {
     save() {
-      console.log(this.image);
+      // console.log(this.image);
+      let formData = new FormData();
+      formData.set("file", this.image.file);
+      formData.set("name", this.image.name);
+      formData.set("category", this.image.category);
+
+      this.$http
+        .post(`user/${this.user.id}/image/upload`, formData, {
+          "content-type": "application/json",
+        })
+        .then((res) => {
+          alert(res.body.message)
+          this.image = {}
+        })
+        .catch(() => {});
     },
     onFilePicked(e) {
       let array = Array.from(e.target.files);
       var file = array[0];
       this.image.imageName = file.name;
-
-      setTimeout(() => {
-        this.reader(file).then((result) => {
-          this.image.image_binary = result.res;
-        }),
-          3000;
-      });
+      this.image.file = file;
+      // setTimeout(() => {
+      //   this.reader(file).then((result) => {
+      //     this.image.image_binary = result.res;
+      //   }),
+      //     3000;
+      // });
     },
     reader(file) {
       return new Promise((resolve) => {
