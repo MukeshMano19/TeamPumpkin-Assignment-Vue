@@ -4,8 +4,14 @@
       <div class="cat-box">Category</div>
       <div class="cat-selection">
         <div class="cat-field" v-for="(cat, idx) in categories" :key="idx">
-          <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike" />
-          <label for="vehicle1">{{ cat.name }}</label
+          <input
+            type="checkbox"
+            name="category"
+            :id="cat.name"
+            :value="cat.code"
+            @click="selectCategory(cat.code)"
+          />
+          <label :for="cat.name" class="lbl-text">{{ cat.name }}</label
           ><br />
         </div>
       </div>
@@ -15,13 +21,9 @@
         class="details"
         v-for="(image, idx) in paginatedImages"
         :key="idx"
-        @click="
-          imageView = true;
-          selectedImage = image;
-        "
+        @click="selectImage(image)"
       >
         <div class="img-box">
-          <!-- <img :src="require(`./img.png`)" /> -->
           <img :src="`${baseUrl}/image/${image.id}`" />
         </div>
         <div class="info">
@@ -49,6 +51,8 @@
       v-if="imageView"
       @close="imageView = $event"
       :image="selectedImage"
+      :baseUrl="baseUrl"
+      @refresh="listImages()"
     ></image-view>
   </div>
 </template>
@@ -63,30 +67,53 @@ export default {
       baseUrl: apiHost,
       imageView: false,
       categories: [
-        { name: "Technology" },
-        { name: "Marketing" },
-        { name: "B2B" },
+        { name: "Technology", code: 1 },
+        { name: "Marketing", code: 2 },
+        { name: "B2B", code: 3 },
       ],
       images: [],
       selectedImage: {},
       itemsPerPage: 3,
       page: 0,
+      selectedCategories: [],
     };
   },
   computed: {
     ...mapState(["user"]),
     paginations() {
-      const pages = this.images.length / this.itemsPerPage;
+      const pages = this.filteredImages.length / this.itemsPerPage;
       return Math.ceil(pages);
     },
+    filteredImages() {
+      return this.images.filter((img) => {
+        if (!this.selectedCategories.length) return true;
+
+        if (this.selectedCategories.includes(img.category)) return true;
+        return false;
+      });
+    },
     paginatedImages() {
-      return this.images.slice(
+      return this.filteredImages.slice(
         this.page * this.itemsPerPage,
         this.itemsPerPage * (this.page == 0 ? 1 : this.page + 1)
       );
     },
   },
   methods: {
+    selectImage(image) {
+      this.selectedImage = image;
+      this.imageView = true;
+    },
+    selectCategory(code) {
+      const found = this.selectedCategories.find((c) => c == code);
+      if (found) {
+        this.selectedCategories = this.selectedCategories.filter(
+          (c) => c != code
+        );
+        return;
+      }
+      this.selectedCategories.push(code);
+    },
     listImages() {
       this.$http
         .get(`user/${this.user.id}/images?NU=true`)
@@ -103,85 +130,7 @@ export default {
 };
 </script>
 <style>
-.main {
-  position: relative;
-  height: calc(100vh - 140px);
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
-  gap: 30px;
-}
 
-/* Left Part */
-.main .left-box {
-  margin: 20px 0;
-  width: 20%;
-  /* background: rgb(43, 43, 32); */
-  border: 1px solid grey;
-}
-.main .left-box .cat-box {
-  max-height: 40px;
-  border-bottom: 1px solid grey;
-  font-size: 18px;
-  padding: 12px;
-  cursor: pointer;
-}
 
-.main .left-box .cat-selection {
-  padding: 12px;
-}
 
-.main .left-box .cat-selection .cat-field {
-  margin-top: 20px;
-}
-
-.main .left-box .cat-selection .cat-field label {
-  font-size: 18px;
-  padding-left: 8px;
-  letter-spacing: 1px;
-}
-
-/* Right Part */
-.main .right-box {
-  margin: 20px 0;
-  width: 70%;
-  border: 1px solid grey;
-  display: flex;
-  flex-flow: row wrap;
-  position: relative;
-}
-
-.main .right-box .details {
-  height: 350px;
-  width: 300px;
-  margin: 20px 20px;
-}
-
-.main .right-box .img-box {
-  height: 250px;
-}
-
-.main .right-box .img-box img {
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-}
-
-.main .right-box .info {
-  padding-top: 14px;
-  line-height: 24px;
-  letter-spacing: 1px;
-}
-
-.main .pagination {
-  position: absolute;
-  bottom: 2%;
-  right: 3%;
-  height: 40px;
-  width: 100%;
-  text-align: right;
-}
-.main .pagination .p-btn {
-  margin: 4px;
-}
 </style>

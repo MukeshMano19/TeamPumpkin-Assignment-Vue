@@ -9,20 +9,22 @@
       <div class="image-content">
         <div class="details">
           <div class="img-box">
-            <img :src="require(`./img.png`)" />
+            <img class="image" :src="`${baseUrl}/image/${image.id}`" />
           </div>
           <div class="info">
             Contributor: {{ image.contributor }}<br />
             Image Name: {{ image.name }}<br />
             Total Downloads: {{ image.total_downloads }}
           </div>
-          <div class="justify-content:center">
-            <input
-              type="submit"
-              value="Download"
-              class="download-btn"
-              @click="downloadImage()"
-            />
+          <div class="justify-content:center" @click="updateCount()">
+            <a download :href="`${baseUrl}/image/${image.id}/download`">
+              <input
+                type="submit"
+                value="Download"
+                class="download-btn"
+                
+              />
+            </a>
           </div>
         </div>
       </div>
@@ -30,29 +32,25 @@
   </div>
 </template>
 <script>
+import { mapState } from "vuex";
+
 export default {
   props: {
     image: Object,
+    baseUrl: String,
+  },
+  computed: {
+    ...mapState(["user"]),
   },
   methods: {
-    async downloadImage() {
-      let url =
-        "https://www.pixsy.com/wp-content/uploads/2021/04/ben-sweet-2LowviVHZ-E-unsplash-1.jpeg";
-      const image = await fetch(url);
-      const imageBlog = await image.blob();
-      const imageURL = URL.createObjectURL(imageBlog);
-
-      const link = document.createElement("a");
-      link.href = imageURL;
-      link.download = this.image.name;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      this.updateDownloadsCount();
-    },
-    updateDownloadsCount() {
-      this.$http.get(`categories`).then(function () {});
+    updateCount() {
+      this.$http
+        .put(`user/${this.user.id}/image/${this.image.id}/updateTotalDownloads`)
+        .then(function (res) {
+          console.log(res);
+          this.$emit("close", false);
+          this.$emit("refresh");
+        });
     },
   },
 };
@@ -115,7 +113,6 @@ export default {
 
 .modal .image-content .details .img-box {
   height: 200px;
-  background: chartreuse;
   margin-top: 20px;
 }
 

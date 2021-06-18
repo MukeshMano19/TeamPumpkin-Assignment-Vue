@@ -47,7 +47,6 @@
 </template>
 <script>
 import { mapState } from "vuex";
-
 export default {
   data() {
     return {
@@ -59,7 +58,6 @@ export default {
   },
   methods: {
     save() {
-      // console.log(this.image);
       let formData = new FormData();
       formData.set("file", this.image.file);
       formData.set("name", this.image.name);
@@ -80,26 +78,6 @@ export default {
       var file = array[0];
       this.image.imageName = file.name;
       this.image.file = file;
-      // setTimeout(() => {
-      //   this.reader(file).then((result) => {
-      //     this.image.image_binary = result.res;
-      //   }),
-      //     3000;
-      // });
-    },
-    reader(file) {
-      return new Promise((resolve) => {
-        const fileReader = new FileReader();
-        fileReader.onload = function (e) {
-          var img = new Image();
-          img.src = e.target.result;
-          img.onload = function () {
-            resolve({ res: fileReader.result });
-          };
-        };
-        fileReader.readAsDataURL(file);
-        return;
-      });
     },
   },
 };

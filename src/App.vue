@@ -2,13 +2,13 @@
   <div id="app">
     <div class="app-bar">
       <h4 class="title">
-        Assignment -
-        {{ user.type == "NU" ? "Normal User" : "Contributor" }} Login
+        Assignment
+        {{ getPageTitle }}
       </h4>
       <div class="user">
         <div style="display: flex; justify-content: flex-end" v-if="isLoggedIn">
           <div style="padding: 10px 10px 0 0">
-            <p>{{ user.name }}Mukesh |</p>
+            <p>{{ user.name }} |</p>
           </div>
           <div>
             <input
@@ -29,15 +29,27 @@ import { mapState, mapMutations } from "vuex";
 export default {
   computed: {
     ...mapState(["isLoggedIn", "user"]),
+    getPageTitle() {
+      if (this.isLoggedIn) {
+        return this.user.type == "NU"
+          ? "- Normal User Login"
+          : "- Contributor Login";
+      }
+      return "";
+    },
   },
   methods: {
-    ...mapMutations(["logOut"]),
+    ...mapMutations(["logOut", "setUser"]),
     doLogout() {
       this.logOut();
       localStorage.removeItem("appUser");
       localStorage.removeItem("appToken");
       this.$router.push("/");
     },
+  },
+  created() {
+    let user = JSON.parse(localStorage.getItem("appUser"));
+    if (user) this.setUser({ user });
   },
 };
 </script>
@@ -71,4 +83,5 @@ export default {
   width: 50%;
   text-align: right;
 }
+
 </style>

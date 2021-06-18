@@ -1,25 +1,37 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Login from '../components/Login'
-import NormalUser from '../components/NormalUser'
-import Contributor from '../components/Contributor'
 
 Vue.use(VueRouter)
 
 const routes = [{
         path: '/',
         name: 'Login',
-        component: Login
+        component: () =>
+            import ('../components/Login'),
+        beforeEnter: (to, from, next) => {
+            let user = JSON.parse(localStorage.getItem("appUser"));
+            if (user && user.type == "NU") {
+                next("/normal-user");
+                return;
+            }
+            if (user && user.type == "C") {
+                next("/contributor");
+                return;
+            }
+            next()
+        }
     },
     {
         path: '/normal-user',
         name: 'NormalUser',
-        component: NormalUser
+        component: () =>
+            import ('../components/NormalUser'),
     },
     {
         path: '/contributor',
         name: 'Contributor',
-        component: Contributor
+        component: () =>
+            import ('../components/Contributor'),
     }
 ]
 

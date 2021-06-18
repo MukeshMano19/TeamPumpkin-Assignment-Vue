@@ -1,0 +1,149 @@
+/* SignUp Page */
+
+.login-signup-page {
+    position: relative;
+    height: calc(100vh - 140px);
+    width: 100%;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+}
+
+.login-signup-page .sign-up {
+    width: 40%;
+    border-right: 2px solid black;
+    margin: 35px 50px;
+}
+
+.login-signup-page .login {
+    width: 40%;
+    margin: 35px 50px;
+}
+
+.lbl-text {
+    letter-spacing: 1px;
+}
+
+.text-field {
+    margin-top: 10px;
+    height: 35px;
+    min-width: 300px;
+    padding-left: 12px;
+}
+
+.radio-field {
+    margin-top: 10px;
+}
+
+.submit-btn {
+    margin-top: 30px;
+    height: 35px;
+    min-width: 100px;
+    background: #dac556;
+    font-weight: 600;
+    letter-spacing: 2px;
+    border: 0.5px solid grey;
+    cursor: pointer;
+}
+
+
+/* ==========Normal and Contributor Screen Stuff======== */
+
+.main {
+    position: relative;
+    height: calc(100vh - 140px);
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    gap: 30px;
+}
+
+
+/* Left Part */
+
+.main .left-box {
+    margin: 20px 0;
+    width: 20%;
+    /* background: rgb(43, 43, 32); */
+    border: 1px solid grey;
+}
+
+.main .left-box .cat-box {
+    max-height: 40px;
+    border-bottom: 1px solid grey;
+    font-size: 18px;
+    padding: 12px;
+    cursor: pointer;
+}
+
+.main .left-box .cat-selection {
+    padding: 12px;
+}
+
+.main .left-box .cat-selection .cat-field {
+    margin-top: 20px;
+}
+
+.main .left-box .cat-selection .cat-field label {
+    font-size: 18px;
+    padding-left: 8px;
+    letter-spacing: 1px;
+}
+
+
+/* Right Part */
+
+.main .right-box {
+    margin: 20px 0;
+    width: 70%;
+    border: 1px solid grey;
+    display: flex;
+    flex-flow: row wrap;
+    position: relative;
+}
+
+.main .right-box .details {
+    height: 350px;
+    width: 300px;
+    margin: 20px 20px;
+}
+
+.main .right-box .img-box {
+    height: 250px;
+}
+
+.main .right-box .img-box img {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+}
+
+.main .right-box .info {
+    padding-top: 14px;
+    line-height: 24px;
+    letter-spacing: 1px;
+}
+
+.main .pagination {
+    position: absolute;
+    bottom: 2%;
+    right: 3%;
+    height: 40px;
+    width: 100%;
+    text-align: right;
+}
+
+.main .pagination .p-btn {
+    margin: 4px;
+}
+
+.submit-btn {
+    margin-top: 30px;
+    height: 35px;
+    min-width: 100px;
+    background: #dac556;
+    font-weight: 600;
+    letter-spacing: 2px;
+    border: 0.5px solid grey;
+    cursor: pointer;
+}

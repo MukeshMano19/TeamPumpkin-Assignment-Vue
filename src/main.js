@@ -4,6 +4,7 @@ import router from './router'
 import VueResource from "vue-resource"
 import { apiHost } from './api'
 import store from './store'
+import '../src/components/style.css'
 
 Vue.use(VueResource);
 
