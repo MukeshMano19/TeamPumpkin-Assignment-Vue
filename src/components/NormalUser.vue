@@ -52,6 +52,7 @@
       @close="imageView = $event"
       :image="selectedImage"
       :baseUrl="baseUrl"
+      :batchImages="batchImages"
       @refresh="listImages()"
     ></image-view>
   </div>
@@ -76,6 +77,7 @@ export default {
       itemsPerPage: 3,
       page: 0,
       selectedCategories: [],
+      batchImages: [],
     };
   },
   computed: {
@@ -103,6 +105,10 @@ export default {
     selectImage(image) {
       this.selectedImage = image;
       this.imageView = true;
+      this.batchImages = this.images.filter(
+        (i) => i.batch_unique_id == image.batch_unique_id
+      );
+      console.log(this.batchImages);
     },
     selectCategory(code) {
       const found = this.selectedCategories.find((c) => c == code);
@@ -118,7 +124,7 @@ export default {
       this.$http
         .get(`user/${this.user.id}/images?NU=true`)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           this.images = res.body.data;
         })
         .catch(() => {});
@@ -130,7 +136,4 @@ export default {
 };
 </script>
 <style>
-
-
-
 </style>

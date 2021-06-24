@@ -12,19 +12,14 @@
             <img class="image" :src="`${baseUrl}/image/${image.id}`" />
           </div>
           <div class="info">
-            Contributor: {{ image.contributor }}<br />
+            Contributor: {{ image.contributor }}{{ batchImages.length }}<br />
             Image Name: {{ image.name }}<br />
             Total Downloads: {{ image.total_downloads }}
           </div>
-          <div class="justify-content:center" @click="updateCount()">
-            <a download :href="`${baseUrl}/image/${image.id}/download`">
-              <input
-                type="submit"
-                value="Download"
-                class="download-btn"
-                
-              />
-            </a>
+          <div class="justify-content:center" @click="download()">
+            <!-- <a download :href="`${baseUrl}/image/${image.id}/download`"> -->
+            <input type="submit" value="Download" class="download-btn" />
+            <!-- </a> -->
           </div>
         </div>
       </div>
@@ -38,14 +33,39 @@ export default {
   props: {
     image: Object,
     baseUrl: String,
+    batchImages: Array,
   },
   computed: {
     ...mapState(["user"]),
   },
   methods: {
+    async download() {
+      for (const img of this.batchImages) {
+        await this.proceedDownload(img);
+      }
+
+      this.updateCount();
+    },
+    proceedDownload(img) {
+      return new Promise((resolve) => {
+        let url = `${this.baseUrl}/image/${img.id}/download`;
+        console.log(url);
+        var link = document.createElement("a");
+        link.href = url;
+        link.download = `image.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Call Next one after 1s
+        setTimeout(() => resolve(), 1000);
+      });
+    },
     updateCount() {
       this.$http
-        .put(`user/${this.user.id}/image/${this.image.id}/updateTotalDownloads`)
+        .put(
+          `user/${this.user.id}/image/${this.image.id}/updateTotalDownloads?batch_id=${this.image.batch_unique_id}`
+        )
         .then(function (res) {
           console.log(res);
           this.$emit("close", false);

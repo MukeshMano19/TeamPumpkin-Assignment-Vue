@@ -20,6 +20,8 @@
           type="file"
           style="display: none"
           ref="image"
+          webkitdirectory
+          directory
           @change="onFilePicked"
           accept="file_extension|audio/*|video/*|image/*|media_type"
         />
@@ -51,6 +53,7 @@ export default {
   data() {
     return {
       image: {},
+      files: [],
     };
   },
   computed: {
@@ -58,26 +61,34 @@ export default {
   },
   methods: {
     save() {
-      let formData = new FormData();
-      formData.set("file", this.image.file);
-      formData.set("name", this.image.name);
-      formData.set("category", this.image.category);
+       const batchId = Math.random()
 
-      this.$http
-        .post(`user/${this.user.id}/image/upload`, formData, {
-          "content-type": "application/json",
-        })
-        .then((res) => {
-          alert(res.body.message)
-          this.image = {}
-        })
-        .catch(() => {});
+      this.files.forEach((file) => {
+        let formData = new FormData();
+        formData.set("file", file);
+        formData.set("name", this.image.name);
+        formData.set("category", this.image.category);
+        formData.set("batch_unique_id", `${batchId}`);
+
+        this.$http
+          .post(`user/${this.user.id}/image/upload`, formData, {
+            "content-type": "application/json",
+          })
+          .then((res) => {
+            // alert(res.body.message);
+            console.log(res)
+            this.image = {};
+          })
+          .catch(() => {});
+      });
     },
     onFilePicked(e) {
       let array = Array.from(e.target.files);
-      var file = array[0];
-      this.image.imageName = file.name;
-      this.image.file = file;
+      array.forEach((asset) => {
+        this.files.push(asset);
+      });
+      // var file = array[0];
+      this.image.imageName = "batch Upload";
     },
   },
 };
